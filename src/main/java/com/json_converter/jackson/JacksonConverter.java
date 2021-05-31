@@ -1,18 +1,13 @@
 package com.json_converter.jackson;
 
-import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.json_converter.JsonToObjectConverter;
 import com.json_converter.util.StringUtility;
 
-public class JacksonConverter {
-	private Map<String,Object> json;
-	private String className;
-	
-	public JacksonConverter(Map<String, Object> json, String className) {
-		this.json = json;
-		this.className = className;
+public class JacksonConverter extends JsonToObjectConverter {
+	public JacksonConverter(String jsonString, String className) throws Exception {
+		super(jsonString, className);
 	}
 	
 	public void convert() {
@@ -20,7 +15,7 @@ public class JacksonConverter {
 		sb.append("import com.fasterxml.jackson.annotation.JsonProperty\n\n");
 		sb.append(String.format("public class %s {\n", className));
 		
-		for(String key : json.keySet()) {
+		for(String key : orderedKeys) {
 			sb.append(variableString(key));
 		}
 		sb.append("}\n");
@@ -33,19 +28,24 @@ public class JacksonConverter {
 				variableType(key),
 				StringUtility.formatJsonKey(key)
 		);
+		
 		return varString + declaration;
 	}
 	
 	private String variableType(String key) {
-		String value = json.get(key).toString();
+		String value = jsonMap.get(key).toString();
 		
-		Pattern numbersOnlyPattern = Pattern.compile("^\\d+$");
-		Matcher intMatcher = numbersOnlyPattern.matcher(value);
-		
-		if(intMatcher.find()) {
+		if(regexMatches(value, "^-{0,1}\\d+$")) {
 			return "int";
+		} else if(regexMatches(value, "^-{0,1}\\d+\\.\\d+$")) {
+			return "double";
 		}
+	
 		return "String";
+	}
+	
+	private boolean regexMatches(String string, String regex) {
+		return Pattern.compile(regex).matcher(string).find();
 	}
 	
 	private String jsonProperty(String key) {
