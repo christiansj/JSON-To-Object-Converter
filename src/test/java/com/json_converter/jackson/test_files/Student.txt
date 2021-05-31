@@ -1,0 +1,16 @@
+// package
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class Student {
+	@JsonProperty("id")
+	private int id;
+	@JsonProperty("first_name")
+	private String firstName;
+	@JsonProperty("last_name")
+	private String lastName;
+	@JsonProperty("is_male")
+	private boolean isMale;
+	@JsonProperty("weight")
+	private double weight;
+}
