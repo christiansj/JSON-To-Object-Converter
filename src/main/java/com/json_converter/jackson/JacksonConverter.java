@@ -22,7 +22,7 @@ public class JacksonConverter extends JsonToObjectConverter {
 		System.out.println(sb.toString());
 	}
 	
-	private String variableString(String key) {
+	private String variableString(String key) {		
 		String varString = jsonProperty(key);
 		String declaration = String.format("\tprivate %s %s;\n",
 				variableType(key),
@@ -33,12 +33,21 @@ public class JacksonConverter extends JsonToObjectConverter {
 	}
 	
 	private String variableType(String key) {
+		if(jsonMap.get(key) == null) {
+			return "Object";
+		}else if(objectKeys.contains(key)) {
+			return jsonMap.get(key).toString().charAt(0) == '[' ? "Object[]" : "Object";
+		}
 		String value = jsonMap.get(key).toString();
 		
 		if(regexMatches(value, "^-{0,1}\\d+$")) {
 			return "int";
 		} else if(regexMatches(value, "^-{0,1}\\d+\\.\\d+$")) {
 			return "double";
+		} else if(value.equals("true") || value.equals("false")) {
+			return "boolean";
+		} else if(objectKeys.contains(key)) {
+			return "Object";
 		}
 	
 		return "String";

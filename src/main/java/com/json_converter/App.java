@@ -4,9 +4,10 @@ import com.json_converter.jackson.JacksonConverter;
 
 public class App {
     public static void main( String[] args ) throws Exception {
-    	String json = "{\"id\": 1, \"first_name\": \"Johnny\", \"age\": 20, \"gpa\": 3.6, \"rank\": 1}";
-
+    	String json = "{\"pet\": {\"name\": \"dog\"}, \"hobbies\": [{\"name\": \"Soccer\"}, {\"name\": \"Piano\"}], \"is_cool\": true}";
+    	
     	JacksonConverter jacksonConverter = new JacksonConverter(json, "Person");
     	jacksonConverter.convert();
+
     }
 }
