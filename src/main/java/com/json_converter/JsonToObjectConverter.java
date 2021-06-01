@@ -1,5 +1,7 @@
 package com.json_converter;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -8,20 +10,30 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class JsonToObjectConverter {
+public abstract class JsonToObjectConverter implements ClassWriter {
 	protected final String jsonString;
 	protected final String className;
+	private final String outputPath;
 	
 	protected LinkedHashMap<String,Object> jsonMap;
 	private ArrayList<String> keys = new ArrayList<String>();
 	protected ArrayList<String> objectKeys = new ArrayList<String>();
 	
-	public JsonToObjectConverter(String jsonString, String className) throws Exception {
+	public JsonToObjectConverter(String jsonString, String className, String outputPath) throws Exception {
 		this.jsonString = jsonString;
 		this.className = className;
-		
+		this.outputPath = outputPath;
 		jsonMap = new ObjectMapper().readValue(jsonString, LinkedHashMap.class);
 		setObjectKeys();
+	}
+	
+	public void write() throws Exception{
+		final String FILE_STRING = conversionString();
+		String fullPath = String.format("%s/%s.java", outputPath, className);
+		BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath));
+		
+		writer.write(FILE_STRING);
+		writer.close();
 	}
 	
 	private void setObjectKeys() {
@@ -75,7 +87,6 @@ public abstract class JsonToObjectConverter {
 					new ObjectMapper().readValue(value, HashMap.class);
 					objectKeys.add(key);
 				}else if(firstChar == '[') {
-
 					new ObjectMapper().readValue(value, Object[].class);
 					objectKeys.add(key);
 				}

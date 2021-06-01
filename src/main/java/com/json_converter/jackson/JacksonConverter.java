@@ -2,17 +2,19 @@ package com.json_converter.jackson;
 
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.json_converter.JsonToObjectConverter;
 import com.json_converter.util.StringUtility;
 
 public class JacksonConverter extends JsonToObjectConverter {
-	public JacksonConverter(String jsonString, String className) throws Exception {
-		super(jsonString, className);
+	public JacksonConverter(String jsonString, String className, String outputPath) throws Exception {
+		super(jsonString, className, outputPath);
 	}
 	
-	public void convert() {
+	public String conversionString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("import com.fasterxml.jackson.annotation.JsonProperty\n\n");
+		sb.append("import com.fasterxml.jackson.annotation.JsonProperty;\n\n");
+		sb.append("@JsonIgnoreProperties(ignoreUnknown = true)\n");
 		sb.append(String.format("public class %s {\n", className));
 		
 		for(String key : jsonMap.keySet()) {
@@ -20,6 +22,8 @@ public class JacksonConverter extends JsonToObjectConverter {
 		}
 		sb.append("}\n");
 		System.out.println(sb.toString());
+		
+		return sb.toString();
 	}
 	
 	private String variableString(String key) {		

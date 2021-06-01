@@ -1,7 +1,6 @@
-// package
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Student {
 	@JsonProperty("id")
 	private int id;
@@ -9,8 +8,12 @@ public class Student {
 	private String firstName;
 	@JsonProperty("last_name")
 	private String lastName;
-	@JsonProperty("is_male")
-	private boolean isMale;
-	@JsonProperty("weight")
-	private double weight;
+	@JsonProperty("is_cool")
+	private boolean isCool;
+	@JsonProperty("gpa")
+	private double gpa;
+	@JsonProperty("courses")
+	private Object[] courses;
+	@JsonProperty("transcript")
+	private Object transcript;
 }

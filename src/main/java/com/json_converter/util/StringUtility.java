@@ -2,7 +2,7 @@ package com.json_converter.util;
 
 public class StringUtility {
 	public static String uppercase(String s) {
-		if(s.length() == 0) {
+		if(s.length() == 1) {
 			return s.toUpperCase();
 		}
 		return s.substring(0,1).toUpperCase() + s.substring(1, s.length());

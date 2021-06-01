@@ -9,6 +9,7 @@ public class StringUtilityTest {
 	@Test
 	@DisplayName("uppercase should uppercase first character of String")
 	public void testUppercase() {
+		assertEquals("A", StringUtility.uppercase("a"));
 		assertEquals("Red", StringUtility.uppercase("red"));
 		assertEquals("The fox jumped over the lazy dog.", StringUtility.uppercase("the fox jumped over the lazy dog."));
 	}
