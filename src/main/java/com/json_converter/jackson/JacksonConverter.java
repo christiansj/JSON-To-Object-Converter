@@ -13,7 +13,8 @@ public class JacksonConverter extends JsonToObjectConverter {
 	
 	public String conversionString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("import com.fasterxml.jackson.annotation.JsonProperty;\n\n");
+		sb.append("import com.fasterxml.jackson.annotation.JsonProperty;\n");
+		sb.append("import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\n\n");
 		sb.append("@JsonIgnoreProperties(ignoreUnknown = true)\n");
 		sb.append(String.format("public class %s {\n", className));
 		
