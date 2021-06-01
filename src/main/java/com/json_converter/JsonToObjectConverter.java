@@ -75,7 +75,8 @@ public abstract class JsonToObjectConverter {
 					new ObjectMapper().readValue(value, HashMap.class);
 					objectKeys.add(key);
 				}else if(firstChar == '[') {
-					new ObjectMapper().readValue(value, HashMap[].class);
+
+					new ObjectMapper().readValue(value, Object[].class);
 					objectKeys.add(key);
 				}
 			}catch(Exception e) {
