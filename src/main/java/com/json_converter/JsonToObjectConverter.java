@@ -2,7 +2,7 @@ package com.json_converter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,19 +11,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class JsonToObjectConverter {
 	protected final String jsonString;
 	protected final String className;
-	protected Map<String,Object> jsonMap;
+	
+	protected LinkedHashMap<String,Object> jsonMap;
+	private ArrayList<String> keys = new ArrayList<String>();
 	protected ArrayList<String> objectKeys = new ArrayList<String>();
-	protected final ArrayList<String> orderedKeys = new ArrayList<String>();
 	
 	public JsonToObjectConverter(String jsonString, String className) throws Exception {
 		this.jsonString = jsonString;
 		this.className = className;
 		
-		jsonMap = new ObjectMapper().readValue(jsonString, HashMap.class);
-		setOrderedKeys();
+		jsonMap = new ObjectMapper().readValue(jsonString, LinkedHashMap.class);
+		setObjectKeys();
 	}
 	
-	private void setOrderedKeys() {
+	private void setObjectKeys() {
     	Matcher matcher = Pattern.compile("\"[\\da-z_]+\":").matcher(jsonString);
    	 	Matcher nextMatcher = Pattern.compile("\"[\\da-z_]+\":").matcher(jsonString);
 
@@ -31,23 +32,14 @@ public abstract class JsonToObjectConverter {
    	 	String nextKey = getKey(nextMatcher);
  
    	 	nextKey = getKey(nextMatcher);
-   	 	
-  	 	if(nextKey != null) {
-  	 		handleObjectValue(currentKey, getValue(matcher.end(), nextMatcher.start()));
-   	 	}else if(currentKey != null){
-   	 		handleObjectValue(currentKey, getValue(matcher.end(), jsonString.length()-2));
-   	 	}
+   	 	handleObjectValue(currentKey, nextKey, matcher, nextMatcher);
 	 	
    	 	while(currentKey != null) {
-   		 	if(nextKey != null) {
-   		 		handleObjectValue(currentKey, getValue(matcher.end(), nextMatcher.start()));
-   	 		}else {
-   	 			handleObjectValue(currentKey, getValue(matcher.end(), jsonString.length()-1));
-   	 		}
-   		 	
-   		 	orderedKeys.add(currentKey);
+   		 	handleObjectValue(currentKey, nextKey, matcher, nextMatcher);
    	 		currentKey = getKey(matcher);
    	 		nextKey = getKey(nextMatcher);
+   	 		
+   	 		keys.add(currentKey);
    	 	}
 	}
 	
@@ -56,7 +48,7 @@ public abstract class JsonToObjectConverter {
 			String match = matcher.group();
    	 		String key = match.substring(1, match.indexOf("\"",1));
    	 		
-   	 		if(!jsonMap.containsKey(key) || orderedKeys.contains(key)) {
+   	 		if(!jsonMap.containsKey(key) || keys.contains(key)) {
    	 			continue;
 	 		}
    	 		return key;
@@ -64,7 +56,18 @@ public abstract class JsonToObjectConverter {
 		return null;
 	}
 	
-	private void handleObjectValue(String key, String value) {
+	private void handleObjectValue(String currentKey, String nextKey, Matcher matcher, Matcher nextMatcher) {
+		if(nextKey != null) {
+			if(matcher.end() > nextMatcher.start()) {
+				nextMatcher.find();
+			}
+			addObjectKey(currentKey, getValue(matcher.end(), nextMatcher.start()));
+	 	}else {
+	 		addObjectKey(currentKey, getValue(matcher.end(), jsonString.length()-1));
+	 	}
+	}
+	
+	private void addObjectKey(String key, String value) {
 			try {
 				char firstChar = value.trim().charAt(0);
 

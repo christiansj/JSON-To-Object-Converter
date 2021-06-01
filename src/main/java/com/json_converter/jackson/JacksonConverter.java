@@ -15,7 +15,7 @@ public class JacksonConverter extends JsonToObjectConverter {
 		sb.append("import com.fasterxml.jackson.annotation.JsonProperty\n\n");
 		sb.append(String.format("public class %s {\n", className));
 		
-		for(String key : orderedKeys) {
+		for(String key : jsonMap.keySet()) {
 			sb.append(variableString(key));
 		}
 		sb.append("}\n");
