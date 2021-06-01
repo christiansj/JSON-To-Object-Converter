@@ -41,6 +41,5 @@ public class IndexController {
     @FXML
     void handleConvertClick(ActionEvent event) {
     	
-    }
-    
+    }    
 }

@@ -65,7 +65,7 @@ public class App extends Application {
 			Parent root = FXMLLoader.load(getClass().getResource("views/index.fxml"));
 			Scene scene = new Scene(root);
 		    
-	        stage.setTitle("FXML Welcome");
+	        stage.setTitle("JSON to Java Class Converter");
 	        stage.setScene(scene);
 	        stage.show();
 		} catch(Exception e) {
