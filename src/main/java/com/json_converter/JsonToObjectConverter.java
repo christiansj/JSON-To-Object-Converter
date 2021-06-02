@@ -53,7 +53,6 @@ public abstract class JsonToObjectConverter implements ClassWriter {
    		 	
    	 		currentKey = getKey(matcher);
    	 		nextKey = getKey(nextMatcher);
-   	 		System.out.println("adding " + currentKey );
    	 		keys.add(currentKey);
    	 	}
 	}
@@ -88,7 +87,6 @@ public abstract class JsonToObjectConverter implements ClassWriter {
 				char firstChar = value.trim().charAt(0);
 
 				if(firstChar == '{') {
-					System.out.println(key + "===" + value);
 					new ObjectMapper().readValue(value, HashMap.class);
 					
 					objectKeys.add(key);

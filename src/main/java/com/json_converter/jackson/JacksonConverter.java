@@ -21,7 +21,6 @@ public class JacksonConverter extends JsonToObjectConverter {
 			sb.append(variableString(key));
 		}
 		sb.append("}\n");
-		System.out.println(sb.toString());
 		
 		return sb.toString();
 	}
