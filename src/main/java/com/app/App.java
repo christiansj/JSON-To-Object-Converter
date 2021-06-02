@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class App extends Application {
+
     public static void main( String[] args ) throws Exception {
 //    	String json = "{\r\n" + 
 //    			"    \"id\": 4448809940,\r\n" + 
@@ -63,10 +64,9 @@ public class App extends Application {
 		try {
 
 			Parent root = FXMLLoader.load(getClass().getResource("views/index.fxml"));
-			Scene scene = new Scene(root);
 		    
 	        stage.setTitle("JSON to Java Class Converter");
-	        stage.setScene(scene);
+	        stage.setScene(new Scene(root));
 	        stage.show();
 		} catch(Exception e) {
 			e.printStackTrace();

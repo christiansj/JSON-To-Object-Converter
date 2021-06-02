@@ -2,7 +2,6 @@ package com.json_converter.jackson;
 
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.json_converter.JsonToObjectConverter;
 import com.json_converter.util.StringUtility;
 
