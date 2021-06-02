@@ -9,11 +9,11 @@ public class JacksonConverterTest {
 	@Test
 	@DisplayName("write() should convert JSON to Jackson Java class and write it to a file")
 	public void testWrite() throws Exception{
-		String json = "{\"id\": 7, \"first_name\": \"Bill\", \"last_name\": \"Board\", \"is_cool\": true, \"gpa\":3.5, \"courses\": [{\"name\": \"Algebra\"}], \"transcript\": {\"name\": \"Bill Board\"}}";
+		String json = "{\"id\": 7, \"first_name\": \"Bill\", \"last_name\": \"Board\", \"is_cool\": true, \"is_tall\": false, \"school\": null, \"gpa\":3.5, \"courses\": [{\"name\": \"Algebra\"}], \"transcript\": {\"name\": \"Bill Board\"}}";
 		JacksonConverter jacksonConverter = 
 				
-				new JacksonConverter(json, "Student", "src/test/java/com/json_converter/jackson/test_files");
-		jacksonConverter.write();
+				new JacksonConverter(json, "Student");
+		jacksonConverter.write("src/test/java/com/json_converter/jackson/test_files");
 		TestUtility.evaluateJavaFileContents("jackson/test_files/", "Student");
 	}
 }

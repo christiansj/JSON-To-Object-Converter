@@ -54,7 +54,7 @@ public class IndexController {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("./../views/class-preview.fxml"));
         String classContents = null;
         try {
-        	 classContents = new JacksonConverter(json.getText(), className.getText(), "src/main/java/output").conversionString();
+        	 classContents = new JacksonConverter(json.getText(), className.getText()).conversionString();
         }catch(Exception e) {
         	invalidJsonError.setVisible(true);
         	convertButton.setDisable(true);

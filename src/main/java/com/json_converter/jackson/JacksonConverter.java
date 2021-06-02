@@ -6,8 +6,8 @@ import com.json_converter.JsonToObjectConverter;
 import com.json_converter.util.StringUtility;
 
 public class JacksonConverter extends JsonToObjectConverter {
-	public JacksonConverter(String jsonString, String className, String outputPath) throws Exception {
-		super(jsonString, className, outputPath);
+	public JacksonConverter(String jsonString, String className) throws Exception {
+		super(jsonString, className);
 	}
 	
 	public String conversionString() {
@@ -50,8 +50,6 @@ public class JacksonConverter extends JsonToObjectConverter {
 			return "double";
 		} else if(value.equals("true") || value.equals("false")) {
 			return "boolean";
-		} else if(objectKeys.contains(key)) {
-			return "Object";
 		}
 	
 		return "String";

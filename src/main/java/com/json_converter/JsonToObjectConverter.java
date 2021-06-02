@@ -9,25 +9,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.json_converter.util.StringUtility;
 
 public abstract class JsonToObjectConverter implements ClassWriter {
 	protected final String jsonString;
 	protected final String className;
-	private final String outputPath;
 	
 	protected LinkedHashMap<String,Object> jsonMap;
 	private ArrayList<String> keys = new ArrayList<String>();
 	protected ArrayList<String> objectKeys = new ArrayList<String>();
 	
-	public JsonToObjectConverter(String jsonString, String className, String outputPath) throws Exception {
+	public JsonToObjectConverter(String jsonString, String className) throws Exception {
 		this.jsonString = jsonString;
-		this.className = className;
-		this.outputPath = outputPath;
+		this.className = StringUtility.uppercase(className);
 		jsonMap = new ObjectMapper().readValue(jsonString, LinkedHashMap.class);
 		setObjectKeys();
 	}
 	
-	public void write() throws Exception{
+	public void write(String outputPath) throws Exception{
 		final String FILE_STRING = conversionString();
 		String fullPath = String.format("%s/%s.java", outputPath, className);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath));

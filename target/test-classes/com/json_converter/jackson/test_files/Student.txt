@@ -11,6 +11,10 @@ public class Student {
 	private String lastName;
 	@JsonProperty("is_cool")
 	private boolean isCool;
+	@JsonProperty("is_tall")
+	private boolean isTall;
+	@JsonProperty("school")
+	private Object school;
 	@JsonProperty("gpa")
 	private double gpa;
 	@JsonProperty("courses")
