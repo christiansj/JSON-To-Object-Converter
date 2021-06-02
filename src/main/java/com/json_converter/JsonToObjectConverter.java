@@ -18,6 +18,7 @@ public abstract class JsonToObjectConverter implements ClassWriter {
 	protected LinkedHashMap<String,Object> jsonMap;
 	private ArrayList<String> keys = new ArrayList<String>();
 	protected ArrayList<String> objectKeys = new ArrayList<String>();
+	protected ArrayList<String> stringKeys = new ArrayList<String>();
 	
 	public JsonToObjectConverter(String jsonString, String className) throws Exception {
 		this.jsonString = jsonString;
@@ -84,6 +85,7 @@ public abstract class JsonToObjectConverter implements ClassWriter {
 	
 	private void addObjectKey(String key, String value) {
 			try {
+				System.out.println(value);
 				char firstChar = value.trim().charAt(0);
 
 				if(firstChar == '{') {
@@ -93,6 +95,8 @@ public abstract class JsonToObjectConverter implements ClassWriter {
 				}else if(firstChar == '[') {
 					new ObjectMapper().readValue(value, Object[].class);
 					objectKeys.add(key);
+				}else if(firstChar == '\"') {
+					stringKeys.add(key);
 				}
 			}catch(Exception e) {
 	

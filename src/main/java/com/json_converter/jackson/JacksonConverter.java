@@ -43,7 +43,9 @@ public class JacksonConverter extends JsonToObjectConverter {
 		}
 		String value = jsonMap.get(key).toString();
 		
-		if(regexMatches(value, "^-{0,1}\\d+$")) {
+		if(stringKeys.contains(key)) {
+			return "String";
+		}else if(regexMatches(value, "^-{0,1}\\d+$")) {
 			return "int";
 		} else if(regexMatches(value, "^-{0,1}\\d+\\.\\d+$")) {
 			return "double";
