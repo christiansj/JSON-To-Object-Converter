@@ -58,6 +58,7 @@ public class IndexController {
         }catch(Exception e) {
         	invalidJsonError.setVisible(true);
         	convertButton.setDisable(true);
+        	e.printStackTrace();
         	return;
         }
         

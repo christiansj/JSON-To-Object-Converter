@@ -36,20 +36,24 @@ public abstract class JsonToObjectConverter implements ClassWriter {
 	}
 	
 	private void setObjectKeys() {
-    	Matcher matcher = Pattern.compile("\"[\\da-z_]+\":").matcher(jsonString);
-   	 	Matcher nextMatcher = Pattern.compile("\"[\\da-z_]+\":").matcher(jsonString);
+		final String JSON_KEY_REGEX = "\"[\\da-z_]+\":";
+    	Matcher matcher = Pattern.compile(JSON_KEY_REGEX).matcher(jsonString);
+   	 	Matcher nextMatcher = Pattern.compile(JSON_KEY_REGEX).matcher(jsonString);
 
    	 	String currentKey = getKey(matcher);
+   	 	keys.add(currentKey);
+   	 	
    	 	String nextKey = getKey(nextMatcher);
  
    	 	nextKey = getKey(nextMatcher);
    	 	handleObjectValue(currentKey, nextKey, matcher, nextMatcher);
-	 	
+	 
    	 	while(currentKey != null) {
    		 	handleObjectValue(currentKey, nextKey, matcher, nextMatcher);
+   		 	
    	 		currentKey = getKey(matcher);
    	 		nextKey = getKey(nextMatcher);
-   	 		
+   	 		System.out.println("adding " + currentKey );
    	 		keys.add(currentKey);
    	 	}
 	}
@@ -62,6 +66,7 @@ public abstract class JsonToObjectConverter implements ClassWriter {
    	 		if(!jsonMap.containsKey(key) || keys.contains(key)) {
    	 			continue;
 	 		}
+
    	 		return key;
 		}
 		return null;
@@ -83,7 +88,9 @@ public abstract class JsonToObjectConverter implements ClassWriter {
 				char firstChar = value.trim().charAt(0);
 
 				if(firstChar == '{') {
+					System.out.println(key + "===" + value);
 					new ObjectMapper().readValue(value, HashMap.class);
+					
 					objectKeys.add(key);
 				}else if(firstChar == '[') {
 					new ObjectMapper().readValue(value, Object[].class);
