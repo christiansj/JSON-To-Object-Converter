@@ -6,9 +6,9 @@ import com.json_converter.jackson.JacksonConverter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -25,6 +25,9 @@ public class IndexController {
     
     @FXML
     private Button convertButton;
+    
+    @FXML
+    private Label invalidJsonError;
     
     @FXML
     void handleClassNameInput(KeyEvent event) {
@@ -49,14 +52,22 @@ public class IndexController {
     @FXML
     void handleConvertClick(ActionEvent event) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("./../views/class-preview.fxml"));
-       
-        String classContents = new JacksonConverter(json.getText(), className.getText(), "src/main/java/output").conversionString();
+        String classContents = null;
+        try {
+        	 classContents = new JacksonConverter(json.getText(), className.getText(), "src/main/java/output").conversionString();
+        }catch(Exception e) {
+        	invalidJsonError.setVisible(true);
+        	convertButton.setDisable(true);
+        	return;
+        }
+        
+        invalidJsonError.setVisible(false);
         ObjectClass objectClass = new ObjectClass(className.getText(), classContents);
         
         fxmlLoader.setController(new PreviewController(objectClass));
      
         Stage stage = new Stage();
-        stage.setTitle("My New Stage Title");
+        stage.setTitle("Object Preview");
         stage.setScene(new Scene((Pane) fxmlLoader.load()));
         stage.show();
     }    
