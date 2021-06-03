@@ -1,13 +1,26 @@
 package com.json_converter.jackson;
 
-import java.util.regex.Pattern;
+import java.util.HashMap;
 
 import com.json_converter.JsonToObjectConverter;
+import com.json_converter.types.VariableType;
 import com.json_converter.util.StringUtility;
 
 public class JacksonConverter extends JsonToObjectConverter {
+	private HashMap<VariableType, String> javaTypeMap = new HashMap<VariableType, String>();
+	
 	public JacksonConverter(String jsonString, String className) throws Exception {
 		super(jsonString, className);
+		initMap();
+	}
+	
+	private void initMap() {
+		javaTypeMap.put(VariableType.STRING, "String");
+		javaTypeMap.put(VariableType.INT, "int");
+		javaTypeMap.put(VariableType.DOUBLE, "double");
+		javaTypeMap.put(VariableType.BOOLEAN, "boolean");
+		javaTypeMap.put(VariableType.OBJECT, "Object");
+		javaTypeMap.put(VariableType.ARRAY, "Object[]");
 	}
 	
 	public String conversionString() {
@@ -27,38 +40,15 @@ public class JacksonConverter extends JsonToObjectConverter {
 	
 	private String variableString(String key) {		
 		String varString = jsonProperty(key);
+		VariableType variableType = keyTypeMap.get(key);
 		String declaration = String.format("\tprivate %s %s;\n",
-				variableType(key),
+				javaTypeMap.get(variableType),
 				StringUtility.formatJsonKey(key)
 		);
 		
 		return varString + declaration;
 	}
 	
-	private String variableType(String key) {
-		if(jsonMap.get(key) == null) {
-			return "Object";
-		}else if(objectKeys.contains(key)) {
-			return jsonMap.get(key).toString().charAt(0) == '[' ? "Object[]" : "Object";
-		}
-		String value = jsonMap.get(key).toString();
-		
-		if(stringKeys.contains(key)) {
-			return "String";
-		}else if(regexMatches(value, "^-{0,1}\\d+$")) {
-			return "int";
-		} else if(regexMatches(value, "^-{0,1}\\d+\\.\\d+$")) {
-			return "double";
-		} else if(value.equals("true") || value.equals("false")) {
-			return "boolean";
-		}
-	
-		return "String";
-	}
-	
-	private boolean regexMatches(String string, String regex) {
-		return Pattern.compile(regex).matcher(string).find();
-	}
 	
 	private String jsonProperty(String key) {
 		return String.format("\t@JsonProperty(\"%s\")\n", key);

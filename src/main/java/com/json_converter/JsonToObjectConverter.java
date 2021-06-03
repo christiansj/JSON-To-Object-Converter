@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.json_converter.types.VariableType;
 import com.json_converter.util.StringUtility;
 
 public abstract class JsonToObjectConverter implements ClassWriter {
@@ -16,14 +17,14 @@ public abstract class JsonToObjectConverter implements ClassWriter {
 	protected final String className;
 	
 	protected LinkedHashMap<String,Object> jsonMap;
+	protected HashMap<String, VariableType> keyTypeMap = new HashMap<String, VariableType>(); 
 	private ArrayList<String> keys = new ArrayList<String>();
-	protected ArrayList<String> objectKeys = new ArrayList<String>();
-	protected ArrayList<String> stringKeys = new ArrayList<String>();
 	
 	public JsonToObjectConverter(String jsonString, String className) throws Exception {
 		this.jsonString = jsonString;
 		this.className = StringUtility.uppercase(className);
 		jsonMap = new ObjectMapper().readValue(jsonString, LinkedHashMap.class);
+		
 		setObjectKeys();
 	}
 	
@@ -77,30 +78,46 @@ public abstract class JsonToObjectConverter implements ClassWriter {
 			if(matcher.end() > nextMatcher.start()) {
 				nextMatcher.find();
 			}
-			addObjectKey(currentKey, getValue(matcher.end(), nextMatcher.start()));
+			assignKeyType(currentKey, getValue(matcher.end(), nextMatcher.start()));
 	 	}else {
-	 		addObjectKey(currentKey, getValue(matcher.end(), jsonString.length()-1));
+	 		assignKeyType(currentKey, getValue(matcher.end(), jsonString.length()-1));
 	 	}
 	}
 	
-	private void addObjectKey(String key, String value) {
-			try {
-				System.out.println(value);
-				char firstChar = value.trim().charAt(0);
+	private void assignKeyType(String key, String value) {
 
+			try {
+				if(jsonMap.get(key) == null) {
+					keyTypeMap.put(key, VariableType.OBJECT);
+				}
+				
+				char firstChar = value.trim().charAt(0);
 				if(firstChar == '{') {
 					new ObjectMapper().readValue(value, HashMap.class);
-					
-					objectKeys.add(key);
+					keyTypeMap.put(key, VariableType.OBJECT);
 				}else if(firstChar == '[') {
 					new ObjectMapper().readValue(value, Object[].class);
-					objectKeys.add(key);
+					keyTypeMap.put(key, VariableType.ARRAY);
 				}else if(firstChar == '\"') {
-					stringKeys.add(key);
+					keyTypeMap.put(key, VariableType.STRING);
+				}
+				
+				String mapValue = jsonMap.get(key).toString();
+				
+				if(regexMatches(mapValue, "^-{0,1}\\d+$")) {
+					keyTypeMap.put(key, VariableType.INT);
+				}else if(regexMatches(mapValue, "^-{0,1}\\d+\\.\\d+$")) {
+					keyTypeMap.put(key, VariableType.DOUBLE);
+				} else if(mapValue.equals("true") || mapValue.equals("false")) {
+					keyTypeMap.put(key, VariableType.BOOLEAN);
 				}
 			}catch(Exception e) {
-	
+				
 			}
+	}
+	
+	private boolean regexMatches(String string, String regex) {
+		return Pattern.compile(regex).matcher(string).find();
 	}
 	
 	private String getValue(int startIndex, int endIndex) {
